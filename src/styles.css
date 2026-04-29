@@ -1,0 +1,250 @@
+/*
+ * Volleyball Cast Receiver — base styles.
+ *
+ * All app-specific colors come from CSS custom properties set by
+ * applyTheme() in src/theme.js — there is no per-app hardcoded CSS.
+ */
+
+:root {
+  /* Defaults; overwritten by applyTheme(themeObj). */
+  --bg-from: #1f2937;
+  --bg-via: #111827;
+  --bg-to: #000000;
+  --accent: #f97316;
+  --team-us: #7c3aed;
+  --team-opp: #ea580c;
+  --set-point: #f59e0b;
+  --match-point: #dc2626;
+  --text: #ffffff;
+  --text-muted: rgba(255, 255, 255, 0.75);
+  --bg-overlay: rgba(0, 0, 0, 0.55);
+
+  --font-score: "Inter", "SF Pro Display", system-ui, sans-serif;
+  --font-label: "Inter", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  background:
+    linear-gradient(135deg, var(--bg-from), var(--bg-via), var(--bg-to)) fixed,
+    black;
+  color: var(--text);
+  font-family: var(--font-label);
+  overflow: hidden;
+}
+
+#video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: black;
+}
+
+#overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* Top row: set indicator (left) + set history (right). */
+#overlay-top {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 28px;
+  font-weight: 700;
+  font-family: var(--font-label);
+}
+
+#set-indicator {
+  background: var(--bg-overlay);
+  padding: 8px 16px;
+  border-radius: 8px;
+  color: var(--text);
+}
+
+#set-history {
+  background: var(--bg-overlay);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* Score block (top-center). */
+#overlay-score {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 16px;
+  align-items: baseline;
+  background: var(--bg-overlay);
+  padding: 16px 32px;
+  border-radius: 16px;
+  font-family: var(--font-score);
+  font-size: 96px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-home,
+.score-away {
+  min-width: 100px;
+  text-align: center;
+}
+
+.score-home {
+  color: var(--team-us);
+}
+
+.score-away {
+  color: var(--team-opp);
+}
+
+.score-sep {
+  color: var(--accent);
+}
+
+/* Team-name strip beneath the score block. */
+#overlay-teams {
+  position: absolute;
+  top: 220px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 32px;
+  font-size: 22px;
+  font-weight: 600;
+  font-family: var(--font-label);
+}
+
+.team-us-name {
+  color: var(--team-us);
+}
+
+.team-opp-name {
+  color: var(--team-opp);
+}
+
+/* Counters (training mode middle). */
+#overlay-counters {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-overlay);
+  padding: 16px 32px;
+  border-radius: 16px;
+  font-family: var(--font-label);
+  font-size: 36px;
+  font-variant-numeric: tabular-nums;
+  display: none;
+  white-space: nowrap;
+}
+
+#overlay-counters .counter {
+  display: inline-block;
+}
+
+#overlay-counters .counter strong {
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+/* Bottom row: last-action (left) + badge (right). */
+#overlay-bottom {
+  position: absolute;
+  bottom: 32px;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+#last-action {
+  background: var(--bg-overlay);
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 32px;
+  font-weight: 600;
+  font-family: var(--font-label);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  max-width: 60%;
+}
+
+#last-action.visible {
+  opacity: 1;
+}
+
+#set-badge {
+  background: var(--accent);
+  color: #ffffff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 28px;
+  font-weight: 800;
+  font-family: var(--font-label);
+  letter-spacing: 0.02em;
+  display: none;
+  animation: pulse 1.2s infinite;
+  text-transform: uppercase;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 12px rgba(255, 255, 255, 0);
+  }
+}
+
+/* Stale heartbeat indicator. */
+#stale-indicator {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: gold;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 8px gold;
+}
+
+#stale-indicator.visible {
+  opacity: 0.85;
+}
+
+/* Training mode: hide score + team strip, show counters. */
+body.training #overlay-score,
+body.training #overlay-teams {
+  display: none;
+}
+
+body.training #overlay-counters {
+  display: block;
+}

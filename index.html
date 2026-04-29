@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Volleyball Cast Receiver</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
+  </head>
+  <body class="theme-coach">
+    <video id="video" autoplay></video>
+
+    <div id="overlay">
+      <div id="overlay-top">
+        <div id="set-indicator"></div>
+        <div id="set-history"></div>
+      </div>
+
+      <div id="overlay-score">
+        <div class="score-home"></div>
+        <div class="score-sep">:</div>
+        <div class="score-away"></div>
+      </div>
+
+      <div id="overlay-teams">
+        <div class="team-us-name"></div>
+        <div class="team-opp-name"></div>
+      </div>
+
+      <div id="overlay-counters"></div>
+
+      <div id="overlay-bottom">
+        <div id="last-action"></div>
+        <div id="set-badge"></div>
+      </div>
+
+      <div id="stale-indicator"></div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
