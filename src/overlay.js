@@ -195,6 +195,91 @@ function escapeHtml(s) {
   );
 }
 
+// Event-type → display config for video-synced pop-ups. Kept on the receiver
+// so we don't have to ship per-event labels in every events message.
+const EVENT_DISPLAY = {
+  kill:           { emoji: '💥', label: 'Kill' },
+  ace:            { emoji: '🎯', label: 'Ace' },
+  block:          { emoji: '🧱', label: 'Block' },
+  opp_error:      { emoji: '💢', label: 'Gegner-Fehler' },
+  error:          { emoji: '❌', label: 'Eigenfehler' },
+  service_error:  { emoji: '🚫', label: 'Aufschlag-Fehler' },
+  block_error:    { emoji: '⛔', label: 'Block-Fehler' },
+  opp_point:      { emoji: '⬇️', label: 'Punkt Gegner' },
+  reception_good: { emoji: '🛡️', label: 'Reception +' },
+  reception_bad:  { emoji: '⚠️', label: 'Reception −' },
+  attack_attempt: { emoji: '🏹', label: 'Angriff' },
+  assist:         { emoji: '🎁', label: 'Assist' },
+};
+
+/**
+ * Update the score directly from a single enriched cast event. Used during
+ * video-synced replay to bypass the regular state push.
+ */
+export function applyVideoSyncedScore(evt) {
+  if (!evt) return;
+  setText('.score-home', String(evt.scoreUs ?? 0));
+  setText('.score-away', String(evt.scoreOpp ?? 0));
+  setText('#set-indicator', `Set ${evt.set ?? 1}`);
+}
+
+/**
+ * Reset score display to 0:0 (used when seeking back to before any event).
+ */
+export function resetScoreDisplay() {
+  setText('.score-home', '0');
+  setText('.score-away', '0');
+  setText('#set-indicator', 'Set 1');
+}
+
+/**
+ * Push a transient event card onto the popup stack.
+ */
+export function showEventPopup(evt) {
+  const container = document.querySelector('#event-popup-container');
+  if (!container || !evt) return;
+
+  const cfg = EVENT_DISPLAY[evt.type] || { emoji: '⚪', label: evt.type || 'Event' };
+  const popup = document.createElement('div');
+  popup.className = 'event-popup' + (evt.team === 'us' ? ' popup-us' : evt.team === 'opp' ? ' popup-opp' : '');
+
+  const playerLine = evt.player
+    ? `<div class="popup-player">${escapeHtml(evt.player)}${evt.number != null ? ' #' + escapeHtml(String(evt.number)) : ''}</div>`
+    : '';
+
+  const showScore = evt.team === 'us' || evt.team === 'opp';
+  const scoreLine = showScore
+    ? `<div class="popup-score">${evt.scoreUs ?? 0} : ${evt.scoreOpp ?? 0}</div>`
+    : '';
+
+  popup.innerHTML = `
+    <div class="popup-emoji">${cfg.emoji}</div>
+    <div class="popup-text">
+      <div class="popup-label">${escapeHtml(cfg.label)}</div>
+      ${playerLine}
+    </div>
+    ${scoreLine}
+  `;
+
+  container.appendChild(popup);
+  // Two-frame delay so the initial transform takes effect before transition.
+  requestAnimationFrame(() => requestAnimationFrame(() => popup.classList.add('visible')));
+
+  setTimeout(() => {
+    popup.classList.remove('visible');
+    setTimeout(() => popup.remove(), 400);
+  }, 1500);
+}
+
+/**
+ * Clear all currently-rendered event popups. Used when seeking backwards
+ * or when a new events feed arrives.
+ */
+export function clearEventPopups() {
+  const container = document.querySelector('#event-popup-container');
+  if (container) container.innerHTML = '';
+}
+
 /**
  * Show stale indicator (yellow dot) when heartbeat is lost.
  */

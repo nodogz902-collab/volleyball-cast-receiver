@@ -273,6 +273,93 @@ body {
   }
 }
 
+/* Event pop-up stack: per-event broadcast cards driven by the receiver
+   from the enriched events feed during video playback. Slide-in from the
+   right, hold briefly, slide-out. */
+#event-popup-container {
+  position: absolute;
+  bottom: 110px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 6;
+}
+
+.event-popup {
+  background: var(--bg-overlay);
+  border-left: 6px solid var(--accent);
+  padding: 12px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-label);
+  min-width: 280px;
+  opacity: 0;
+  transform: translateX(120%);
+  transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.event-popup.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.event-popup.popup-us {
+  border-left-color: var(--team-us);
+}
+
+.event-popup.popup-opp {
+  border-left-color: var(--team-opp);
+}
+
+.popup-emoji {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.popup-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.popup-label {
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.popup-player {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.popup-score {
+  font-size: 24px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-score);
+  color: var(--accent);
+  line-height: 1;
+}
+
+.event-popup.popup-us .popup-score {
+  color: var(--team-us);
+}
+
+.event-popup.popup-opp .popup-score {
+  color: var(--team-opp);
+}
+
 /* Stale heartbeat indicator. */
 #stale-indicator {
   position: absolute;

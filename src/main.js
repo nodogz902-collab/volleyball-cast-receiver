@@ -9,7 +9,15 @@
  */
 
 import './styles.css';
-import { update as updateOverlay, markStale, clearStale } from './overlay.js';
+import {
+  update as updateOverlay,
+  markStale,
+  clearStale,
+  applyVideoSyncedScore,
+  resetScoreDisplay,
+  showEventPopup,
+  clearEventPopups,
+} from './overlay.js';
 import { applyTheme } from './theme.js';
 
 const CHANNEL_NS = 'urn:x-cast:com.alexhiller.cast.tracker';
@@ -20,6 +28,13 @@ const STALE_CHECK_INTERVAL_MS = 1_000;
 
 let lastHeartbeat = Date.now();
 let isStale = false;
+
+// Video-synced events feed (set by 'events' messages). When non-empty,
+// timeupdate ticks drive the score and popups instead of relying on
+// per-frame state pushes.
+let castEvents = [];
+let lastSyncedTime = -1;
+let videoListenerWired = false;
 
 /**
  * Parse and route a single inbound custom-channel message.
@@ -47,10 +62,70 @@ export function handleMessage(msg) {
         clearStale();
       }
       break;
+    case 'events':
+      castEvents = Array.isArray(msg.events) ? msg.events : [];
+      lastSyncedTime = -1;
+      clearEventPopups();
+      ensureVideoSyncListener();
+      // Snap to current time immediately so reconnects don't show 0:0.
+      applyVideoSyncForCurrentTime({ silent: true });
+      break;
     default:
       // Unknown types are ignored deliberately for forward-compat.
       break;
   }
+}
+
+function ensureVideoSyncListener() {
+  if (videoListenerWired) return;
+  const v = typeof document !== 'undefined' ? document.querySelector('#video') : null;
+  if (!v) return;
+  v.addEventListener('timeupdate', onVideoTimeUpdate);
+  v.addEventListener('seeking', onVideoSeek);
+  videoListenerWired = true;
+}
+
+function onVideoTimeUpdate() {
+  applyVideoSyncForCurrentTime({ silent: false });
+}
+
+function onVideoSeek() {
+  // Backward jumps reset the popup state so we don't replay everything in
+  // a burst when the user seeks forward again.
+  const v = document.querySelector('#video');
+  if (!v) return;
+  if (v.currentTime < lastSyncedTime) {
+    lastSyncedTime = v.currentTime;
+    clearEventPopups();
+    applyVideoSyncForCurrentTime({ silent: true });
+  }
+}
+
+function applyVideoSyncForCurrentTime({ silent }) {
+  if (!castEvents.length) return;
+  const v = typeof document !== 'undefined' ? document.querySelector('#video') : null;
+  const t = v ? v.currentTime : 0;
+
+  // Fire popups for events that fall in (lastSyncedTime, t]. Skip when
+  // silent (initial snap or seek) to avoid replay bursts.
+  if (!silent) {
+    for (const e of castEvents) {
+      if (e.videoTime > lastSyncedTime && e.videoTime <= t) {
+        showEventPopup(e);
+      }
+    }
+  }
+
+  // Latest event ≤ t drives the displayed score.
+  let latest = null;
+  for (const e of castEvents) {
+    if (e.videoTime <= t) latest = e;
+    else break;
+  }
+  if (latest) applyVideoSyncedScore(latest);
+  else resetScoreDisplay();
+
+  lastSyncedTime = t;
 }
 
 function checkStale() {
