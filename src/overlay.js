@@ -227,13 +227,14 @@ export function applyVideoSyncedScore(evt) {
 
 /**
  * Reset score display to 0:0 (used when seeking back to before any event).
+ * Serve dots are deliberately NOT cleared here — those reflect the
+ * set-start server set by the regular state push, so leaving them alone
+ * keeps the right team flagged at 0:0.
  */
 export function resetScoreDisplay() {
   setText('.score-home', '0');
   setText('.score-away', '0');
   setText('#set-indicator', 'Set 1');
-  toggleClass('.serve-us', 'active', false);
-  toggleClass('.serve-opp', 'active', false);
 }
 
 /**
