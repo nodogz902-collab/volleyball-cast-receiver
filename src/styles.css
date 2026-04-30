@@ -56,51 +56,65 @@ body {
   pointer-events: none;
 }
 
-/* Top row: set indicator (left) + set history (right). */
+/* Top strip: set indicator centered + set history pill below. */
 #overlay-top {
   position: absolute;
-  top: 24px;
-  left: 24px;
-  right: 24px;
+  top: 18px;
+  left: 0;
+  right: 0;
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  font-size: 28px;
-  font-weight: 700;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-label);
+  pointer-events: none;
 }
 
 #set-indicator {
-  background: var(--bg-overlay);
-  padding: 8px 16px;
-  border-radius: 8px;
-  color: var(--text);
+  background: var(--accent);
+  padding: 10px 32px;
+  border-radius: 999px;
+  color: #ffffff;
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  font-variant-numeric: tabular-nums;
 }
 
 #set-history {
   background: var(--bg-overlay);
-  padding: 8px 16px;
-  border-radius: 8px;
+  padding: 6px 18px;
+  border-radius: 999px;
   font-variant-numeric: tabular-nums;
   color: var(--text-muted);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
-/* Score block (top-center). */
+#set-history:empty {
+  display: none;
+}
+
+/* Score block (top-center, below set-indicator). */
 #overlay-score {
   position: absolute;
-  top: 80px;
+  top: 96px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  gap: 16px;
+  gap: 24px;
   align-items: flex-start;
   background: var(--bg-overlay);
-  padding: 16px 32px;
-  border-radius: 16px;
+  padding: 18px 40px;
+  border-radius: 18px;
   font-family: var(--font-score);
-  font-size: 96px;
+  font-size: 112px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
 }
 
 .score-side {
@@ -130,18 +144,19 @@ body {
   line-height: 1;
 }
 
-/* Serve indicator: small label below the serving team's score. */
+/* Serve indicator: prominent label below the serving team's score. */
 .serve-dot {
   font-family: var(--font-label);
-  font-size: 16px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  padding: 4px 10px;
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  padding: 8px 18px;
   border-radius: 999px;
   opacity: 0;
   transition: opacity 0.25s ease;
   white-space: nowrap;
   visibility: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 .score-side-us .serve-dot {
@@ -239,25 +254,25 @@ body {
   opacity: 1;
 }
 
-/* Setball / Matchball banner. Promoted from a small bottom badge to a
-   prominent top-center banner so it reads as the dominant on-screen call. */
+/* Setball / Matchball banner. Sits over the set-indicator strip when
+   active so it dominates the top of the frame. */
 #set-badge {
   position: fixed;
-  top: 24px;
+  top: 18px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--accent);
   color: #ffffff;
-  padding: 16px 48px;
-  border-radius: 14px;
-  font-size: 44px;
+  padding: 22px 64px;
+  border-radius: 16px;
+  font-size: 56px;
   font-weight: 900;
   font-family: var(--font-label);
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   display: none;
   animation: pulse 1.2s infinite;
   text-transform: uppercase;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  box-shadow: 0 14px 48px rgba(0, 0, 0, 0.5);
   z-index: 5;
 }
 
@@ -290,18 +305,18 @@ body {
 
 .event-popup {
   background: var(--bg-overlay);
-  border-left: 6px solid var(--accent);
-  padding: 12px 20px;
-  border-radius: 10px;
+  border-left: 8px solid var(--accent);
+  padding: 18px 28px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 18px;
   font-family: var(--font-label);
-  min-width: 280px;
+  min-width: 400px;
   opacity: 0;
   transform: translateX(120%);
   transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .event-popup.visible {
@@ -318,7 +333,7 @@ body {
 }
 
 .popup-emoji {
-  font-size: 32px;
+  font-size: 44px;
   line-height: 1;
 }
 
@@ -326,25 +341,26 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .popup-label {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 26px;
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   line-height: 1;
 }
 
 .popup-player {
-  font-size: 14px;
+  font-size: 18px;
   color: var(--text-muted);
   line-height: 1;
+  font-weight: 600;
 }
 
 .popup-score {
-  font-size: 24px;
+  font-size: 34px;
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   font-family: var(--font-score);
@@ -378,12 +394,10 @@ body {
   opacity: 0.85;
 }
 
-/* Training mode: hide score + team strip, show counters. */
-body.training #overlay-score,
-body.training #overlay-teams {
-  display: none;
-}
-
+/* Training mode: keep score + team strip visible (volleyball is always
+   point-driven), and show drill counters in addition. */
 body.training #overlay-counters {
   display: block;
+  top: 280px;
+  font-size: 28px;
 }
