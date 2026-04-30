@@ -56,12 +56,20 @@ function renderMatch(s) {
   setText('.team-us-name', usName);
   setText('.team-opp-name', oppName);
 
+  toggleClass('.serve-us', 'active', !!us.serving);
+  toggleClass('.serve-opp', 'active', !!opp.serving);
+
   const setNumber = s.set?.number ?? 1;
   setText('#set-indicator', `Set ${setNumber}`);
 
   setText('#set-history', formatSetHistory(s.setScores || []));
 
   renderBadge(s.flags || {});
+}
+
+function toggleClass(sel, cls, on) {
+  const el = document.querySelector(sel);
+  if (el) el.classList.toggle(cls, on);
 }
 
 function renderTraining(s) {

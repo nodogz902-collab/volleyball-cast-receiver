@@ -5,8 +5,8 @@
     <title>Volleyball Cast Receiver</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
-    <script type="module" crossorigin src="./assets/index-ZpZwnJUZ.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-De5e7Gcf.css">
+    <script type="module" crossorigin src="./assets/index-BTAi7ZI2.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-0teM4APh.css">
   </head>
   <body class="theme-coach">
     <video id="video" autoplay></video>
@@ -18,9 +18,15 @@
       </div>
 
       <div id="overlay-score">
-        <div class="score-home"></div>
+        <div class="score-side score-side-us">
+          <div class="score-home"></div>
+          <div class="serve-dot serve-us">▲ SERVE</div>
+        </div>
         <div class="score-sep">:</div>
-        <div class="score-away"></div>
+        <div class="score-side score-side-opp">
+          <div class="score-away"></div>
+          <div class="serve-dot serve-opp">▲ SERVE</div>
+        </div>
       </div>
 
       <div id="overlay-teams">

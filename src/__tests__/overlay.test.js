@@ -24,6 +24,8 @@ function setupDom() {
         <div id="set-badge"></div>
       </div>
       <div id="stale-indicator"></div>
+      <div class="serve-dot serve-us"></div>
+      <div class="serve-dot serve-opp"></div>
     </div>
   `;
 }
@@ -118,6 +120,14 @@ describe('overlay - match layout', () => {
     const oppName = document.querySelector('.team-opp-name').textContent;
     expect(usName).toContain('🏐');
     expect(oppName).not.toContain('🏐');
+    expect(document.querySelector('.serve-us').classList.contains('active')).toBe(true);
+    expect(document.querySelector('.serve-opp').classList.contains('active')).toBe(false);
+  });
+
+  it('toggles serve-dot when serving switches to opponent', () => {
+    update(makeMatchState()); // opp serving from baseline
+    expect(document.querySelector('.serve-us').classList.contains('active')).toBe(false);
+    expect(document.querySelector('.serve-opp').classList.contains('active')).toBe(true);
   });
 
   it('hides set badge when no flags set', () => {
