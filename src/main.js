@@ -36,6 +36,12 @@ let castEvents = [];
 let lastSyncedTime = -1;
 let videoListenerWired = false;
 
+// Broadcast hook used to push `position` messages back to senders during
+// retro-tracking (so the sender knows the authoritative TV currentTime).
+// Wired up in the SDK-present block below.
+let broadcastPosition = null;
+const POSITION_BROADCAST_INTERVAL_MS = 250;
+
 /**
  * Parse and route a single inbound custom-channel message.
  * Exported for unit-testing without the Cast SDK.
@@ -70,8 +76,33 @@ export function handleMessage(msg) {
       // Snap to current time immediately so reconnects don't show 0:0.
       applyVideoSyncForCurrentTime({ silent: true });
       break;
+    case 'control':
+      handleControl(msg);
+      break;
     default:
       // Unknown types are ignored deliberately for forward-compat.
+      break;
+  }
+}
+
+// Sender-side player controls during retro-tracking. The sender is the
+// authority for play/pause/seek; the receiver just reflects the command.
+function handleControl(msg) {
+  const v = typeof document !== 'undefined' ? document.querySelector('#video') : null;
+  if (!v) return;
+  switch (msg.action) {
+    case 'play':
+      v.play().catch(() => {});
+      break;
+    case 'pause':
+      v.pause();
+      break;
+    case 'seek':
+      if (typeof msg.time === 'number' && isFinite(msg.time)) {
+        v.currentTime = Math.max(0, msg.time);
+      }
+      break;
+    default:
       break;
   }
 }
@@ -147,6 +178,9 @@ const castGlobal =
 if (castGlobal && castGlobal.framework) {
   const context = castGlobal.framework.CastReceiverContext.getInstance();
 
+  // Track senders so we can broadcast position updates back to them.
+  // Multi-sender is supported via undefined senderId on sendCustomMessage,
+  // which broadcasts to all connected senders.
   context.addCustomMessageListener(CHANNEL_NS, (event) => {
     let payload;
     try {
@@ -156,6 +190,26 @@ if (castGlobal && castGlobal.framework) {
     }
     handleMessage(payload);
   });
+
+  // Wire up position broadcast: sender needs the authoritative TV currentTime
+  // to stamp retro-tracked events with the correct videoTime.
+  broadcastPosition = () => {
+    const v = typeof document !== 'undefined' ? document.querySelector('#video') : null;
+    if (!v) return;
+    const msg = {
+      type: 'position',
+      time: v.currentTime || 0,
+      paused: v.paused,
+      duration: isFinite(v.duration) ? v.duration : 0,
+    };
+    try {
+      // undefined senderId → broadcast to all connected senders
+      context.sendCustomMessage(CHANNEL_NS, undefined, msg);
+    } catch {
+      // ignore — happens during early startup before senders are connected
+    }
+  };
+  setInterval(broadcastPosition, POSITION_BROADCAST_INTERVAL_MS);
 
   setInterval(checkStale, STALE_CHECK_INTERVAL_MS);
 
