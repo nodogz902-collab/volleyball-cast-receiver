@@ -212,13 +212,17 @@ const EVENT_DISPLAY = {
 
 /**
  * Update the score directly from a single enriched cast event. Used during
- * video-synced replay to bypass the regular state push.
+ * video-synced replay to bypass the regular state push. The team that
+ * scored the most recent point also takes the next serve (side-out rule),
+ * so we drive the serve marker from evt.team here.
  */
 export function applyVideoSyncedScore(evt) {
   if (!evt) return;
   setText('.score-home', String(evt.scoreUs ?? 0));
   setText('.score-away', String(evt.scoreOpp ?? 0));
   setText('#set-indicator', `Set ${evt.set ?? 1}`);
+  toggleClass('.serve-us', 'active', evt.team === 'us');
+  toggleClass('.serve-opp', 'active', evt.team === 'opp');
 }
 
 /**
@@ -228,6 +232,8 @@ export function resetScoreDisplay() {
   setText('.score-home', '0');
   setText('.score-away', '0');
   setText('#set-indicator', 'Set 1');
+  toggleClass('.serve-us', 'active', false);
+  toggleClass('.serve-opp', 'active', false);
 }
 
 /**
