@@ -5,18 +5,19 @@ function setupDom() {
   document.body.className = 'theme-coach';
   document.body.innerHTML = `
     <div id="overlay">
-      <div id="overlay-top">
+      <div id="scorebar">
         <div id="set-indicator"></div>
         <div id="set-history"></div>
-      </div>
-      <div id="overlay-score">
-        <div class="score-home"></div>
-        <div class="score-sep">:</div>
-        <div class="score-away"></div>
-      </div>
-      <div id="overlay-teams">
-        <div class="team-us-name"></div>
-        <div class="team-opp-name"></div>
+        <div class="scorebar-team scorebar-team-us">
+          <span class="team-us-name"></span>
+          <span class="serve-dot serve-us">🏐</span>
+          <span class="score-home"></span>
+        </div>
+        <div class="scorebar-team scorebar-team-opp">
+          <span class="team-opp-name"></span>
+          <span class="serve-dot serve-opp">🏐</span>
+          <span class="score-away"></span>
+        </div>
       </div>
       <div id="overlay-counters"></div>
       <div id="overlay-bottom">
@@ -24,8 +25,6 @@ function setupDom() {
         <div id="set-badge"></div>
       </div>
       <div id="stale-indicator"></div>
-      <div class="serve-dot serve-us"></div>
-      <div class="serve-dot serve-opp"></div>
     </div>
   `;
 }
@@ -197,8 +196,8 @@ describe('overlay - match layout', () => {
 
   it('shows score block in match mode', () => {
     update(makeMatchState());
-    const score = document.querySelector('#overlay-score');
-    expect(score.style.display).not.toBe('none');
+    expect(document.querySelector('#scorebar')).toBeTruthy();
+    expect(document.querySelector('.score-home').textContent).toBe('14');
   });
 });
 
@@ -266,7 +265,7 @@ describe('overlay - training layout', () => {
     vi.useRealTimers();
   });
 
-  it('hides score when isTraining=true', () => {
+  it('keeps scorebar visible in training mode', () => {
     update({
       type: 'state',
       v: 1,
@@ -276,8 +275,8 @@ describe('overlay - training layout', () => {
       counters: { aces: 5, errors: 2, total: 12 },
       drillLabel: 'Aufschlag-Serie',
     });
-    const score = document.querySelector('#overlay-score');
-    expect(score.style.display).toBe('none');
+    expect(document.querySelector('#scorebar')).toBeTruthy();
+    expect(document.body.classList.contains('training')).toBe(true);
   });
 
   it('shows counters horizontally in training mode', () => {
@@ -348,7 +347,7 @@ describe('overlay - training layout', () => {
       drillLabel: 'Drill',
     });
     update(makeMatchState());
-    expect(document.querySelector('#overlay-score').style.display).not.toBe('none');
+    expect(document.querySelector('#scorebar')).toBeTruthy();
     expect(document.querySelector('#overlay-counters').style.display).toBe('none');
   });
 });

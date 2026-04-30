@@ -152,15 +152,13 @@ function renderLastAction(la) {
 }
 
 function showMatchSlots() {
-  const score = document.querySelector('#overlay-score');
-  if (score) score.style.display = '';
   const counters = document.querySelector('#overlay-counters');
   if (counters) counters.style.display = 'none';
 }
 
 function hideMatchSlots() {
-  const score = document.querySelector('#overlay-score');
-  if (score) score.style.display = 'none';
+  // Score stays visible in training too — volleyball is always
+  // point-driven. Counters appear via the body.training rule.
 }
 
 function formatSetHistory(scores) {

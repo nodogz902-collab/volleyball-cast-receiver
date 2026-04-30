@@ -56,117 +56,108 @@ body {
   pointer-events: none;
 }
 
-/* Top strip: set indicator centered + set history pill below. */
-#overlay-top {
+/* Scorebar: vertical card pinned to the left edge containing set
+   indicator, set history, and per-team rows with score + serve marker.
+   Mirrors broadcast-style scoreboards (e.g. left-edge volleyball graphics). */
+#scorebar {
   position: absolute;
-  top: 18px;
-  left: 0;
-  right: 0;
+  top: 80px;
+  left: 28px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  background: var(--bg-overlay);
+  border-radius: 18px;
+  padding: 18px 24px;
   font-family: var(--font-label);
-  pointer-events: none;
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.45);
+  min-width: 320px;
+  backdrop-filter: blur(6px);
 }
 
 #set-indicator {
-  background: var(--accent);
-  padding: 10px 32px;
-  border-radius: 999px;
-  color: #ffffff;
-  font-size: 30px;
+  font-size: 22px;
   font-weight: 900;
-  letter-spacing: 0.12em;
+  color: var(--accent);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+  text-align: center;
   font-variant-numeric: tabular-nums;
+  padding-bottom: 4px;
 }
 
 #set-history {
-  background: var(--bg-overlay);
-  padding: 6px 18px;
-  border-radius: 999px;
-  font-variant-numeric: tabular-nums;
+  font-size: 16px;
   color: var(--text-muted);
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.05em;
+  padding-bottom: 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 #set-history:empty {
   display: none;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }
 
-/* Score block (top-center, below set-indicator). */
-#overlay-score {
-  position: absolute;
-  top: 96px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 24px;
-  align-items: flex-start;
-  background: var(--bg-overlay);
-  padding: 18px 40px;
-  border-radius: 18px;
-  font-family: var(--font-score);
-  font-size: 112px;
-  font-weight: 800;
-  font-variant-numeric: tabular-nums;
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35);
-}
-
-.score-side {
-  display: flex;
-  flex-direction: column;
+.scorebar-team {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  gap: 4px;
+  gap: 16px;
+  padding: 10px 0;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: 0.02em;
+}
+
+.scorebar-team + .scorebar-team {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.team-us-name {
+  color: var(--team-us);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+
+.team-opp-name {
+  color: var(--team-opp);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
 }
 
 .score-home,
 .score-away {
-  min-width: 100px;
-  text-align: center;
-  line-height: 1;
-}
-
-.score-home {
-  color: var(--team-us);
-}
-
-.score-away {
-  color: var(--team-opp);
-}
-
-.score-sep {
-  color: var(--accent);
-  line-height: 1;
-}
-
-/* Serve indicator: prominent label below the serving team's score. */
-.serve-dot {
-  font-family: var(--font-label);
-  font-size: 22px;
+  font-family: var(--font-score);
+  font-size: 64px;
   font-weight: 900;
-  letter-spacing: 0.14em;
-  padding: 8px 18px;
-  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  min-width: 80px;
+  line-height: 0.9;
+}
+
+.score-home { color: var(--team-us); }
+.score-away { color: var(--team-opp); }
+
+/* Volleyball-emoji serve marker — only visible for the team currently
+   serving. Sits between team name and score in the row. */
+.serve-dot {
+  font-size: 30px;
+  line-height: 1;
+  width: 42px;
+  text-align: center;
   opacity: 0;
-  transition: opacity 0.25s ease;
-  white-space: nowrap;
   visibility: hidden;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
-}
-
-.score-side-us .serve-dot {
-  background: var(--team-us);
-  color: #ffffff;
-}
-
-.score-side-opp .serve-dot {
-  background: var(--team-opp);
-  color: #ffffff;
+  transition: opacity 0.25s ease;
 }
 
 .serve-dot.active {
@@ -176,29 +167,8 @@ body {
 }
 
 @keyframes serve-pulse {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-3px); }
-}
-
-/* Team-name strip beneath the score block. */
-#overlay-teams {
-  position: absolute;
-  top: 220px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 32px;
-  font-size: 22px;
-  font-weight: 600;
-  font-family: var(--font-label);
-}
-
-.team-us-name {
-  color: var(--team-us);
-}
-
-.team-opp-name {
-  color: var(--team-opp);
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.08); }
 }
 
 /* Counters (training mode middle). */

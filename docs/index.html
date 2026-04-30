@@ -5,33 +5,26 @@
     <title>Volleyball Cast Receiver</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="https://www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
-    <script type="module" crossorigin src="./assets/index-Ddo7Mz_x.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-D1aqn4gX.css">
+    <script type="module" crossorigin src="./assets/index-q8Wghnbc.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BURhANFO.css">
   </head>
   <body class="theme-coach">
     <video id="video" autoplay></video>
 
     <div id="overlay">
-      <div id="overlay-top">
+      <div id="scorebar">
         <div id="set-indicator"></div>
         <div id="set-history"></div>
-      </div>
-
-      <div id="overlay-score">
-        <div class="score-side score-side-us">
-          <div class="score-home"></div>
-          <div class="serve-dot serve-us">▲ SERVE</div>
+        <div class="scorebar-team scorebar-team-us">
+          <span class="team-us-name"></span>
+          <span class="serve-dot serve-us">🏐</span>
+          <span class="score-home"></span>
         </div>
-        <div class="score-sep">:</div>
-        <div class="score-side score-side-opp">
-          <div class="score-away"></div>
-          <div class="serve-dot serve-opp">▲ SERVE</div>
+        <div class="scorebar-team scorebar-team-opp">
+          <span class="team-opp-name"></span>
+          <span class="serve-dot serve-opp">🏐</span>
+          <span class="score-away"></span>
         </div>
-      </div>
-
-      <div id="overlay-teams">
-        <div class="team-us-name"></div>
-        <div class="team-opp-name"></div>
       </div>
 
       <div id="overlay-counters"></div>
