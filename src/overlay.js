@@ -51,10 +51,10 @@ function renderMatch(s) {
   setText('.score-home', String(us.score ?? 0));
   setText('.score-away', String(opp.score ?? 0));
 
-  const usName = (us.name || 'Wir') + (us.serving ? ` ${SERVE_EMOJI}` : '');
-  const oppName = (opp.name || 'Gegner') + (opp.serving ? ` ${SERVE_EMOJI}` : '');
-  setText('.team-us-name', usName);
-  setText('.team-opp-name', oppName);
+  // Team names without serve emoji — the dedicated .serve-dot column
+  // in the scorebar carries the serve indicator now.
+  setText('.team-us-name', us.name || 'Wir');
+  setText('.team-opp-name', opp.name || 'Gegner');
 
   toggleClass('.serve-us', 'active', !!us.serving);
   toggleClass('.serve-opp', 'active', !!opp.serving);

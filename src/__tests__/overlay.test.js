@@ -115,10 +115,10 @@ describe('overlay - match layout', () => {
         },
       })
     );
-    const usName = document.querySelector('.team-us-name').textContent;
-    const oppName = document.querySelector('.team-opp-name').textContent;
-    expect(usName).toContain('🏐');
-    expect(oppName).not.toContain('🏐');
+    // Team names are now plain — serve indication lives in the .serve-dot
+    // column of the scorebar to avoid the double-emoji bug.
+    expect(document.querySelector('.team-us-name').textContent).toBe('Wir');
+    expect(document.querySelector('.team-opp-name').textContent).toBe('Gegner');
     expect(document.querySelector('.serve-us').classList.contains('active')).toBe(true);
     expect(document.querySelector('.serve-opp').classList.contains('active')).toBe(false);
   });
